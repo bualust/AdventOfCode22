@@ -13,13 +13,10 @@ int main() {
     int number_of_helves = int(helves_cal.size());
     std::cerr<<"Number of helves is "<<number_of_helves<<std::endl;
 
-    int max_calories = helves_cal.at(0);
-    for(int i = 0; i < int(helves_cal.size()); i++){
-        if(helves_cal.at(i)>max_calories) max_calories=helves_cal.at(i);
-    }
+    std::sort(helves_cal.begin(), helves_cal.end());
+    int max_calories = helves_cal.at(number_of_helves-1);
     std::cerr<<"Max calories are "<<max_calories<<std::endl;
 
-    std::sort(helves_cal.begin(), helves_cal.end());
     int top_three = 0;
     for(int i = 0; i<3; i++){
         int index = number_of_helves-i-1;
