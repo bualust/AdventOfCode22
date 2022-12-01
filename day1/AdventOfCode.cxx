@@ -23,7 +23,6 @@ int main() {
         top_three+=helves_cal.at(index);
     }
     std::cerr<<"Top three helves calories "<<top_three<<std::endl;
-
     return 0;
 }
 
@@ -35,16 +34,11 @@ std::vector<int> get_helves_cal(){
     int calories = 0;
     for( std::string line; getline( input, line ); ) {
         if(!line.empty()) {
-            std::stringstream ss(line);
-            int new_calories;
-            ss>>new_calories;
-            calories+=new_calories;
+            calories+=std::stoi(line);
         } else {
             out_helves_cal.push_back(calories);
             calories=0;
         }
-
     }
-
     return out_helves_cal;
 }
