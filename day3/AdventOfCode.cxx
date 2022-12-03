@@ -10,20 +10,22 @@ string INPUT = "input.txt";
 
 int main() {
 
-    int priority_1 = get_priority_1();
+    int priority_1 = get_priority(1);
     cout<<"First priority is "<<priority_1<<endl;
 
-    int priority_2 = get_priority_2();
+    int priority_2 = get_priority(2);
     cout<<"Second priority is "<<priority_2<<endl;
 
     return 0;
 }
 
-int get_priority_1() {
+int get_priority(int which) {
 
     ifstream input; 
     input.open(INPUT);
     int total_prior= 0;
+    int lines_count = 1;
+    string first, second, third;
     for( string line; getline( input, line ); ) {
 
         istringstream ss(line);
@@ -34,26 +36,10 @@ int get_priority_1() {
         string first_compart = rucksack.substr(0,split);
         string secon_compart = rucksack.substr(split);
 
-        int priority = common_priority_1(first_compart,secon_compart);
-        total_prior+=priority;
-    }
+        vector<string> compartments = {first_compart,secon_compart};
+        int priority_1 = common_priority(compartments);
 
-    return total_prior;
-}
-
-int get_priority_2() {
-
-    ifstream input; 
-    input.open(INPUT);
-    int total_prior = 0;
-    int lines_count = 1;
-    string first, second, third;
-    for( string line; getline( input, line ); ) {
-
-        istringstream ss(line);
-        string rucksack;
-        ss>>rucksack;
-
+        int priority_2 = 0;
         if(lines_count==1) {
             first = rucksack;
             lines_count++;
@@ -62,48 +48,40 @@ int get_priority_2() {
             lines_count++;
         } else if (lines_count==3) {
             third = rucksack;
-            int priority = common_priority_2(first,second,third);
-            total_prior+=priority;
+            vector<string> bunches = {first,second,third};
+            priority_2 = common_priority(bunches);
             lines_count = 1;
         }
+
+        if(which == 1) total_prior+=priority_1;
+        if(which == 2) total_prior+=priority_2;
     }
 
     return total_prior;
 }
 
-int common_priority_2(string first, string second, string third) {
 
-     vector<bool> occ(52,0);
-     for(int i=0;i<first.length();i++){
-         occ[first[i]-'A']=true;
-     }
+int common_priority(vector<string> rucksacks) {
 
-     vector<bool> occ2(52,0);
-     for (int i = 0; i <second.length(); i++){
-         if (occ[second[i] - 'A']) occ2[second[i]-'A']=true;
+     vector<vector<bool>> occurancies;
+     for(int i = 0; i < rucksacks.size()-1; i++) {
+         vector<bool> occ(52,0);
+         occurancies.push_back(occ);
      }
 
      int priority = 0;
-     for (int i = 0; i <third.length(); i++){
-         if (occ2[third[i] - 'A']) {
-             priority = convert_priority(int(third[i]));
-         }
-     }
-
-     return priority;
-}
-
-int common_priority_1(string first, string second) {
-
-     vector<bool> occ(52,0);
-     for(int i=0;i<first.length();i++){
-         occ[first[i]-'A']=true;
-     }
-
-     int priority = 0;
-     for (int i = 0; i <second.length(); i++){
-         if (occ[second[i] - 'A']) {
-             priority = convert_priority(int(second[i]));
+     for(int i = 0; i < rucksacks.size(); i++) {
+         string rucksack = rucksacks.at(i);
+         for(int j=0;j<rucksack.length();j++){
+             if(i==0) {
+                occurancies[i][rucksack[j]-'A'] = true;
+             } else if(i>0 && i<rucksacks.size()-1) {
+                if (occurancies[i-1][rucksack[j] - 'A']) occurancies[i][rucksack[j]-'A'] = true;
+             } else {
+                if (occurancies[i-1][rucksack[j] - 'A']) {
+                    priority = convert_priority(int(rucksack[j]));
+                }
+             }
          }
      }
 
